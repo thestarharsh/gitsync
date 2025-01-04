@@ -1,9 +1,11 @@
 "use client";
 
 import { ExternalLink, Github } from "lucide-react";
+import Link from "next/link";
 
 import useGetProjects from "@/hooks/use-get-projects";
-import Link from "next/link";
+
+import CommitLog from "./commit-log";
 
 const DashboardPage = () => {
   const { project } = useGetProjects();
@@ -43,7 +45,7 @@ const DashboardPage = () => {
         </div>
       </div>
       <div className="mt-8"></div>
-      commit log
+        <CommitLog />
     </div>
   );
 };

@@ -8,6 +8,7 @@ import Image from "next/image";
 import MDEditor from "@uiw/react-md-editor";
 
 import useGetProjects from "@/hooks/use-get-projects";
+import useRefetch from "@/hooks/use-refetch";
 import { api } from "@/trpc/react";
 
 import { Button } from "@/components/ui/button";
@@ -28,6 +29,7 @@ import "./ask-question-card.css";
 const AskQuestionCard = () => {
   const { project } = useGetProjects();
   const [question, setQuestion] = useState("");
+  const [submittedQuestion, setSubmittedQuestion] = useState(question);
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [fileReferences, setFileReferences] = useState<
@@ -35,6 +37,7 @@ const AskQuestionCard = () => {
   >([]);
   const [answer, setAnswer] = useState("");
   const saveAnswer = api.project.saveAnswer.useMutation();
+  const refetch = useRefetch();
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     setAnswer("");
@@ -51,6 +54,7 @@ const AskQuestionCard = () => {
         setAnswer((ans) => ans + delta);
       }
     }
+    setSubmittedQuestion(question);
     setQuestion("");
     setLoading(false);
   };
@@ -75,13 +79,14 @@ const AskQuestionCard = () => {
                   saveAnswer.mutate(
                     {
                       projectId: project!.id,
-                      question,
+                      question: submittedQuestion,
                       answer,
                       fileReferences,
                     },
                     {
                       onSuccess: () => {
                         toast.success("Answer saved successfully");
+                        refetch();
                       },
                       onError: () => {
                         toast.error("Failed to save answer");

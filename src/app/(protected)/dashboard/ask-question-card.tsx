@@ -1,11 +1,14 @@
 "use client";
 
 import React, { useState } from "react";
+import { DownloadIcon} from "lucide-react";
+import { toast } from "sonner";
 import { readStreamableValue } from "ai/rsc";
 import Image from "next/image";
 import MDEditor from "@uiw/react-md-editor";
 
 import useGetProjects from "@/hooks/use-get-projects";
+import { api } from "@/trpc/react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -31,6 +34,7 @@ const AskQuestionCard = () => {
     { fileName: string; sourceCode: string; summary: string }[]
   >([]);
   const [answer, setAnswer] = useState("");
+  const saveAnswer = api.project.saveAnswer.useMutation();
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     setAnswer("");
@@ -47,22 +51,50 @@ const AskQuestionCard = () => {
         setAnswer((ans) => ans + delta);
       }
     }
+    setQuestion("");
     setLoading(false);
   };
 
   return (
     <>
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="sm:max-w-[70vw] h-full">
+        <DialogContent className="h-full sm:max-w-[70vw]">
           <DialogHeader>
-            <DialogTitle>
-              <Image
-                src={"/GitSyncLogo.png"}
-                alt="GitSync"
-                width={40}
-                height={40}
-              />
-            </DialogTitle>
+            <div className="flex items-center gap-2">
+              <DialogTitle>
+                <Image
+                  src={"/GitSyncLogo.png"}
+                  alt="GitSync"
+                  width={40}
+                  height={40}
+                />
+              </DialogTitle>
+              <Button
+                variant={"outline"}
+                onClick={() =>
+                  saveAnswer.mutate(
+                    {
+                      projectId: project!.id,
+                      question,
+                      answer,
+                      fileReferences,
+                    },
+                    {
+                      onSuccess: () => {
+                        toast.success("Answer saved successfully");
+                      },
+                      onError: () => {
+                        toast.error("Failed to save answer");
+                      },
+                    },
+                  )
+                }
+                disabled={saveAnswer.isPending}
+              >
+                <DownloadIcon className="size-4 mr-1" />
+                Save Answer
+              </Button>
+            </div>
           </DialogHeader>
           <MDEditor.Markdown
             source={answer}

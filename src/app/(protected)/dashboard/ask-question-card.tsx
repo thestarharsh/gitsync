@@ -132,6 +132,7 @@ const AskQuestionCard = () => {
       <Card className="relative col-span-3">
         <CardHeader>
           <CardTitle>Ask a question</CardTitle>
+          <p className="text-xs text-muted-foreground">GitSync has knowledge of the codebase.</p>
         </CardHeader>
         <CardContent>
           <form onSubmit={onSubmit}>

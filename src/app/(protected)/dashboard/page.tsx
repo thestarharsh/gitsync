@@ -7,6 +7,7 @@ import useGetProjects from "@/hooks/use-get-projects";
 
 import AskQuestionCard from "./ask-question-card";
 import CommitLog from "./commit-log";
+import MeetingCard from "./meeting-card";
 
 const DashboardPage = () => {
   const { project } = useGetProjects();
@@ -42,7 +43,7 @@ const DashboardPage = () => {
       <div className="mt-4">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-5">
             <AskQuestionCard />
-            Meeting
+            <MeetingCard />
         </div>
       </div>
       <div className="mt-8"></div>

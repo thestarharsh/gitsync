@@ -6,7 +6,7 @@ import { getDownloadURL, getStorage, ref, uploadBytesResumable } from "firebase/
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-    apiKey: "AIzaSyAfiVQFVgXysGadDQpB3eW2poA_AlC24D0",
+    apiKey: process.env.FIREBASE_API_KEY!,
     authDomain: "gitsync-784d6.firebaseapp.com",
     projectId: "gitsync-784d6",
     storageBucket: "gitsync-784d6.firebasestorage.app",

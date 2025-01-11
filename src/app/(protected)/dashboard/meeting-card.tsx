@@ -13,10 +13,28 @@ import { uploadFile } from "@/lib/firebase";
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { useMutation } from "@tanstack/react-query";
+import axios from "axios";
 
 const MeetingCard = () => {
   const router = useRouter();
   const { project } = useGetProjects();
+  const processMeeting = useMutation({
+    mutationFn: async (data: {
+      meetingUrl: string;
+      projectId: string;
+      meetingId: string;
+    }) => {
+      const { meetingId, meetingUrl, projectId } = data;
+      const response = await axios.post(`/api/process-meeting`, {
+        meetingUrl,
+        meetingId,
+        projectId,
+      });
+      return response.data;
+    },
+  });
+
   const [isUploading, setIsUploading] = useState(false);
   const [progress, setProgress] = useState(0);
   const uploadMeeting = api.project.uploadMeeting.useMutation();
@@ -36,19 +54,27 @@ const MeetingCard = () => {
         file as File,
         setProgress,
       )) as string;
-      uploadMeeting.mutate({
-        projectId: project?.id,
-        meetingUrl: downloadUrl,
-        name: file?.name,
-      }, {
-        onSuccess: () => {
-          toast.success("Meeting uploaded successfully.");
-          router.push(`/meetings`);
+      uploadMeeting.mutate(
+        {
+          projectId: project?.id,
+          meetingUrl: downloadUrl,
+          name: file?.name,
         },
-        onError: () => {
-          toast.error("Failed to upload meeting.")
+        {
+          onSuccess: ( meeting ) => {
+            toast.success("Meeting uploaded successfully.");
+            router.push(`/meetings`);
+            processMeeting.mutateAsync({
+              meetingUrl: downloadUrl,
+              meetingId: meeting.id,
+              projectId: project.id,
+            });
+          },
+          onError: () => {
+            toast.error("Failed to upload meeting.");
+          },
         },
-      });
+      );
       setIsUploading(false);
     },
   });

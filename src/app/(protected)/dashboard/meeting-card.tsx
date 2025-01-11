@@ -2,16 +2,24 @@
 
 import { useState } from "react";
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
+import { useRouter } from "next/navigation";
 import { useDropzone } from "react-dropzone";
 import { Presentation, Upload } from "lucide-react";
+import { toast } from "sonner";
 
+import useGetProjects from "@/hooks/use-get-projects";
+import { api } from "@/trpc/react";
 import { uploadFile } from "@/lib/firebase";
+
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 
 const MeetingCard = () => {
+  const router = useRouter();
+  const { project } = useGetProjects();
   const [isUploading, setIsUploading] = useState(false);
   const [progress, setProgress] = useState(0);
+  const uploadMeeting = api.project.uploadMeeting.useMutation();
   const { getRootProps, getInputProps } = useDropzone({
     accept: {
       "audio/*": [".mp3", ".wav", ".mp4"],
@@ -19,10 +27,28 @@ const MeetingCard = () => {
     multiple: false,
     maxSize: 50_000_000,
     onDrop: async (accepetedFiles) => {
+      if (!project) return;
       setIsUploading(true);
       console.log(accepetedFiles);
       const file = accepetedFiles[0];
-      const downloadUrl = await uploadFile(file as File, setProgress);
+      if (!file) return;
+      const downloadUrl = (await uploadFile(
+        file as File,
+        setProgress,
+      )) as string;
+      uploadMeeting.mutate({
+        projectId: project?.id,
+        meetingUrl: downloadUrl,
+        name: file?.name,
+      }, {
+        onSuccess: () => {
+          toast.success("Meeting uploaded successfully.");
+          router.push(`/meetings`);
+        },
+        onError: () => {
+          toast.error("Failed to upload meeting.")
+        },
+      });
       setIsUploading(false);
     },
   });

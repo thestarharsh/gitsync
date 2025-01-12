@@ -1,6 +1,6 @@
 {
     "functions": {
-        "app/api/process-meeting/route.js": {
+        "src/app/api/process-meeting/route.ts": {
             "maxDuration": 60
         }
     }

@@ -10,6 +10,7 @@ import ArchiveButton from "./archive-button";
 import CommitLog from "./commit-log";
 import InviteButton from "./invite-button";
 import MeetingCard from "./meeting-card";
+import TeamMembers from "./team-members";
 
 const DashboardPage = () => {
   const { project } = useGetProjects();
@@ -37,7 +38,7 @@ const DashboardPage = () => {
         </div>
         <div className="h-4"></div>
           <div className="flex items-center gap-2">
-            Team members
+            <TeamMembers />
             <InviteButton />
             <ArchiveButton />
           </div>

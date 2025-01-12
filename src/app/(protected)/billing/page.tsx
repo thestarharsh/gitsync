@@ -3,12 +3,12 @@
 import { useState } from "react";
 import { FileIcon, IndianRupee, Info } from "lucide-react";
 import Script from "next/script";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 import { api } from "@/trpc/react";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
-import { useRouter } from "next/navigation";
 
 declare global {
   interface Window {
@@ -33,7 +33,7 @@ const BillingPage = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ amount: price }),
+        body: JSON.stringify({ amount: price, credits: creditsToBuyAmount }),
       });
       const data = await response.json();
 
@@ -45,9 +45,9 @@ const BillingPage = () => {
         description: "You are paying for GitSync AI credits.",
         order_id: data.orderId,
         handler: function (response: any) {
-            toast.success("Payment successful!");
-            router.push("/dashboard");
-            console.log(response);
+          toast.success("Payment successful!");
+          router.push("/dashboard");
+          console.log(response);
         },
         prefill: {
           name: `${user?.firstName} ${user?.lastName}`,
@@ -71,7 +71,7 @@ const BillingPage = () => {
 
   return (
     <div>
-        <Script src="https://checkout.razorpay.com/v1/checkout.js" />
+      <Script src="https://checkout.razorpay.com/v1/checkout.js" />
       <h1 className="text-xl font-semibold">Billing</h1>
       <div className="h-2"></div>
       <p className="text-sm text-gray-500">

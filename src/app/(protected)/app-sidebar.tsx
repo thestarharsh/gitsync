@@ -1,7 +1,8 @@
 "use client";
 
+import { useEffect } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   LayoutDashboard,
   Bot,
@@ -52,8 +53,17 @@ const items = [
 
 export function AppSidebar() {
   const pathname = usePathname();
+  const router = useRouter();
   const { open } = useSidebar();
   const { projects, projectId, setProjectId } = useGetProjects();
+
+  useEffect(() => {
+    if (projects?.length === 0) {
+      router.push("/create");
+    } else if (projects?.[0]?.id && !projectId) {
+      setProjectId(projects[0].id);
+    }
+  }, [projects, projectId, setProjectId]);  
 
   return (
     <Sidebar collapsible="icon" variant="floating">

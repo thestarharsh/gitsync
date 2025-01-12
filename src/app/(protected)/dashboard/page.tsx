@@ -8,6 +8,7 @@ import useGetProjects from "@/hooks/use-get-projects";
 import AskQuestionCard from "./ask-question-card";
 import ArchiveButton from "./archive-button";
 import CommitLog from "./commit-log";
+import InviteButton from "./invite-button";
 import MeetingCard from "./meeting-card";
 
 const DashboardPage = () => {
@@ -35,9 +36,9 @@ const DashboardPage = () => {
           </div>
         </div>
         <div className="h-4"></div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
             Team members
-            Invite link
+            <InviteButton />
             <ArchiveButton />
           </div>
       </div>

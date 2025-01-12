@@ -14,6 +14,7 @@ const TeamMembers = () => {
           key={member.id}
           src={member.user.imageUrl || ""}
           alt={member.user.firstName || ""}
+          title={`${member.user.firstName} ${member.user.lastName}`}
           className="h-6 w-6 rounded-full"
         />
       ))}
